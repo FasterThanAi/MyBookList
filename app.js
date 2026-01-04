@@ -21,15 +21,22 @@ class UI{
             UI.addBookToList(book));
         }
         static addBookToList(book){ // function to create row in table
-            const list=document.getElementById('book-list');
-            const row=document.createElement('tr');
+            const list=document.getElementById('book-list'); // find table 
+            const row=document.createElement('tr'); // create new table 
             row.innerHTML=`
             <td>${book.title}</td>
             <td>${book.author}</td>
             <td>${book.isbn}</td>
-            <td><a href="# class="btn btn-danger bg-red-500">X</a></td>
+            <td><a href="#" class="btn btn-danger bg-red-500 delete">X</a></td>
             `;
-            list.appendChild(row);
+            list.appendChild(row); // push the new row in table 
+        }
+        static deleteBook(ele){
+            // make sure ele has delete class 
+            if(ele.classList.contains('delete')){
+                // its parrent should be removed i.e whole row 
+                ele.parentElement.parentElement.remove();
+            }
         }
         static clearFields(){
             document.querySelector('#title').value=''
@@ -42,7 +49,8 @@ class UI{
 
 // events: display book 
 
-document.addEventListener('DOMContentLoaded', UI.displayBooks);
+document.addEventListener('DOMContentLoaded', UI.displayBooks); // as the page load 
+// it run ui.displayBooks 
 
 // events : add book 
 
@@ -66,4 +74,10 @@ document.getElementById('book-form').addEventListener('submit',(e)=>{
 
 
 // events : remove book 
+    // targetting certain element 
+document.querySelector('#book-list').addEventListener('click',(e)=>{
+    // console.log(e.target);
+    UI.deleteBook(e.target)
+    
+})
 

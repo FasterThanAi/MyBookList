@@ -9,14 +9,8 @@ class Book{
 // ui task : handle ui task 
 class UI{
     static displayBooks(){
-        const storedBooks=[
-            {
-                title:'Book one',
-                author:'Rishu',
-                isbn:'45545'
-            }
-        ];
-        const books=storedBooks;
+        
+        const books=Store.getBooks();
         books.forEach((book)=>
             UI.addBookToList(book));
         }
@@ -67,7 +61,40 @@ class UI{
     }
 
 // store class : handle storage 
+    // we canot store obj in localstor
+    // it has to be string 
+    // to pull it out we have to parse it 
+class Store{
+    static getBooks(){
+        let books;
+        if(localStorage.getItem('books')===null){
+            books=[];
+        }
+        else{
+            // as the book is present and it store in string 
+            // json.parse
+            books=JSON.parse(localStorage.getItem('books'))
+        }
+        return books;
+    }
+    static addBook(book){
+        const books=Store.getBooks();
 
+        books.push(book);
+        localStorage.setItem('books',JSON.stringify(books))
+    }
+    static removeBook(isbn){
+        const books=Store.getBooks();
+        // using isbn as unique id 
+
+        books.forEach((book,index)=>{
+            if(book.isbn=== isbn){
+                books.splice(index,1);
+            }
+        })
+        localStorage.setItem('books',JSON.stringify(books))
+    }
+}
 // events: display book 
 
 document.addEventListener('DOMContentLoaded', UI.displayBooks); // as the page load 
@@ -94,6 +121,8 @@ document.getElementById('book-form').addEventListener('submit',(e)=>{
     // add book to list
 
     UI.addBookToList(book)
+    // add book to local store
+    Store.addBook(book)
 
     // show book success fully added validation 
     UI.showAlert('Book Added Successfully','success')
@@ -110,9 +139,15 @@ document.getElementById('book-form').addEventListener('submit',(e)=>{
     // targetting certain element 
 document.querySelector('#book-list').addEventListener('click',(e)=>{
     // console.log(e.target);
+    // remove book from store 
     UI.deleteBook(e.target)
-    
+     // delete books from local storage
+        // as we click on delete it then go to parent and previous sibling 
+         // bcz we are using isbn to delete  
+     Store.removeBook(e.target.parentElement.previousElementSibling.textContent);
     //show message of book removed 
     UI.showAlert('Book Deleted Successfully','success')
+   
+
 })
 
